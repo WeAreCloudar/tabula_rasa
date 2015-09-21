@@ -42,7 +42,7 @@ latest_json_file = ::Dir.glob('/var/lib/aws/opsworks/chef/*').sort.keep_if { |i|
 ruby_block 'run Tabula-Rasa chef-client' do
   block do
     Chef::Log.info OpsWorks::ShellOut.shellout(
-      "export LANG='en_US.UTF-8'; /opt/aws/opsworks/current/bin/chef-client -j #{latest_json_file} -c #{config_file} -o #{recipes.join(',')} 2>&1",
+      "printenv ; /opt/aws/opsworks/current/bin/chef-client -j #{latest_json_file} -c #{config_file} -o #{recipes.join(',')} 2>&1",
       :cwd => node[:tabula_rasa][:home_dir]
     )
   end
