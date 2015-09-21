@@ -38,12 +38,20 @@ end
 # Assumption: The most recent JSON file is the one for the current OpsWorks agent invocation.
 latest_json_file = ::Dir.glob('/var/lib/aws/opsworks/chef/*').sort.keep_if { |i| i.end_with?('.json') }.last
 
+# Set language, passed to environment
+lang =
+
 # Run the chef client
 ruby_block 'run Tabula-Rasa chef-client' do
   block do
     Chef::Log.info OpsWorks::ShellOut.shellout(
-      "printenv ; /opt/aws/opsworks/current/bin/chef-client -j #{latest_json_file} -c #{config_file} -o #{recipes.join(',')} 2>&1",
-      :cwd => node[:tabula_rasa][:home_dir]
+      "printenv; locale; /opt/aws/opsworks/current/bin/chef-client -j #{latest_json_file} -c #{config_file} -o #{recipes.join(',')} 2>&1",
+      :cwd => node[:tabula_rasa][:home_dir],
+      :environment => {
+        'LANG' => 'en_US.UTF-8',
+        'LANGUAGE' => 'en_US.UTF-8',
+        'LC_ALL' => 'en_US.UTF-8',
+      }
     )
   end
 end
